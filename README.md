@@ -2,11 +2,18 @@
 
 Shops and organisers list terrain, tables, and spare dice/minis available to borrow for a session, for [Tabletop Events Calendar](https://github.com/TABARC-Code/tabletop-gaming-events-calendar).
 
-**Not built yet.** This repo is reserved ahead of time, same as the rest of this family of plugins.
+Requires [Tabletop Events Calendar](https://github.com/TABARC-Code/tabletop-gaming-events-calendar) — this plugin does nothing without it.
 
-The idea: anchored on organiser identity (same "any one event ID" pattern the core plugin already uses, and the same claim-link approach as [Venues & Organisers](https://github.com/TABARC-Code/tabletop-gaming-events-calendar)), a shop or club lists what they've got spare to lend, without a login system of its own.
+## What it does
 
-Requires [Tabletop Events Calendar](https://github.com/TABARC-Code/tabletop-gaming-events-calendar) once it exists.
+- `[tabletop_organiser_resources organiser="123"]` — an organiser's full lending list (terrain, tables, dice/minis, or anything else), anchored on any one of their own event IDs, plus a form to list something new.
+- Listing an item requires the same email address already on record as the organiser for that event — checked directly against the core plugin's own data. No separate login, no verification queue.
+- Every listing starts pending, same moderation model as an event submission.
+- A magic link, emailed on submission, lets the organiser edit or remove their own listings afterwards — no account needed.
+
+## Why anchor on organiser identity rather than depend on the Venues plugin
+
+Because the core plugin already has everything needed: an organiser email tied to at least one published event. Building this on top of Venues & Organisers would mean Resources only works if you've *also* installed a second companion plugin — breaking the whole point of the jigsaw approach, where each piece only ever depends on the core. Same "anchor on data that already exists" reasoning as the Reviews plugin's organiser widget.
 
 ## Licence
 
