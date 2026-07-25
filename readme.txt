@@ -16,6 +16,8 @@ A lot of clubs and shops have a cupboard full of terrain, a spare folding table,
 
 Listing something requires the same email address already on record as the organiser for one of their events — checked directly against the core plugin's own data, no separate login or verification queue. Every listing starts pending, same moderation model as an event submission, and the organiser gets a magic link to edit or remove their own listings afterwards, no account needed.
 
+Anyone browsing the list can ask about an item without the organiser's real email ever being shown — an "Ask about this" button relays the message instead.
+
 One shortcode:
 
 * `[tabletop_organiser_resources organiser="123"]` — an organiser's full lending list, anchored on any one of their own event IDs, plus a form to list something new.
@@ -42,4 +44,4 @@ Only if they know the exact organiser email already on record for that event, wh
 == Changelog ==
 
 = 1.0.0 =
-* Initial release: tres_resource CPT, organiser-anchored lending list, magic-link self-service management.
+* Initial release: tres_resource CPT, organiser-anchored lending list, magic-link self-service management, private "ask about this" contact relay.

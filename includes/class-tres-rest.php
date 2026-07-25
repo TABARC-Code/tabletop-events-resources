@@ -44,6 +44,15 @@ class TRES_Rest {
 				'permission_callback' => '__return_true',
 			)
 		);
+		register_rest_route(
+			'tres/v1',
+			'/contact/(?P<id>\d+)',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'contact_owner' ),
+				'permission_callback' => '__return_true',
+			)
+		);
 	}
 
 	/**
@@ -153,6 +162,55 @@ class TRES_Rest {
 				'message' => __( "Thanks — we'll review your listing shortly. Check your email for a link to edit it or take it down later.", 'tabletop-events-resources' ),
 			)
 		);
+	}
+
+	/**
+	 * "Ask about this" relay — same reasoning as the Carpool and LFG
+	 * plugins' own contact relays: a visitor never sees the organiser's
+	 * real address, only the organiser ever does, and the Reply-To
+	 * header means they can just hit reply. Without this, there was no
+	 * way at all to actually ask about borrowing something — a real
+	 * gap, since a public lending list is only useful if someone can
+	 * follow up on it.
+	 */
+	public function contact_owner( WP_REST_Request $request ) {
+		$resource_id = (int) $request->get_param( 'id' );
+		$resource    = get_post( $resource_id );
+		if ( ! $resource || TRES_POST_TYPE !== $resource->post_type || 'publish' !== $resource->post_status ) {
+			return new WP_Error( 'tres_not_found', __( 'Listing not found.', 'tabletop-events-resources' ), array( 'status' => 404 ) );
+		}
+
+		$params = $request->get_json_params() ?: $request->get_body_params();
+		if ( ! empty( $params['website'] ) ) {
+			return rest_ensure_response( array( 'success' => true ) ); // Honeypot.
+		}
+
+		$from_name  = sanitize_text_field( $params['name'] ?? '' );
+		$from_email = sanitize_email( $params['email'] ?? '' );
+		$message    = sanitize_textarea_field( $params['message'] ?? '' );
+		if ( ! $from_name || ! is_email( $from_email ) || ! $message ) {
+			return new WP_Error( 'tres_invalid', __( 'Please fill in your name, email, and a message.', 'tabletop-events-resources' ), array( 'status' => 400 ) );
+		}
+
+		$to = get_post_meta( $resource_id, '_tres_organiser_email', true );
+		if ( ! is_email( $to ) ) {
+			return new WP_Error( 'tres_no_contact', __( "This listing's owner can't be reached right now.", 'tabletop-events-resources' ), array( 'status' => 404 ) );
+		}
+
+		wp_mail(
+			$to,
+			sprintf( '[%s] Someone asked about your resource listing', get_bloginfo( 'name' ) ),
+			sprintf(
+				"%s (%s) asked about \"%s\":\n\n%s\n\nJust hit reply to get back to them.\n",
+				$from_name,
+				$from_email,
+				get_the_title( $resource ),
+				$message
+			),
+			array( 'Reply-To: ' . $from_name . ' <' . $from_email . '>' )
+		);
+
+		return rest_ensure_response( array( 'success' => true, 'message' => __( 'Message sent!', 'tabletop-events-resources' ) ) );
 	}
 
 	private function notify_admin( $resource_id, $title ) {

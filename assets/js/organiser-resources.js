@@ -47,6 +47,8 @@
 				'</div>' +
 				'<div class="tres-card-title">' + escapeHtml( r.title ) + '</div>' +
 				( r.notes ? '<p class="tres-card-notes">' + escapeHtml( r.notes ) + '</p>' : '' ) +
+				'<button type="button" class="tres-contact-btn" data-tres-contact="' + r.id + '">Ask about this</button>' +
+				'<div class="tres-contact-form" data-tres-contact-form="' + r.id + '" hidden></div>' +
 			'</div>'
 		);
 	}
@@ -74,6 +76,12 @@
 	}
 
 	function bind( root ) {
+		root.querySelectorAll( '[data-tres-contact]' ).forEach( function ( btn ) {
+			btn.addEventListener( 'click', function () {
+				toggleContactForm( root, btn.getAttribute( 'data-tres-contact' ) );
+			} );
+		} );
+
 		var form = root.querySelector( '.tres-form' );
 		if ( ! form ) return;
 		var errorBanner = root.querySelector( '.tec-sf-error-banner' );
@@ -106,6 +114,65 @@
 				.then( function ( r ) { return r.json().then( function ( body ) { return { ok: r.ok, body: body }; } ); } )
 				.then( function ( result ) {
 					if ( !result.ok ) throw new Error( ( result.body && result.body.message ) || 'Could not submit your listing.' );
+					form.style.display = 'none';
+					success.classList.add( 'visible' );
+				} )
+				.catch( function ( err ) {
+					errorBanner.textContent = err.message;
+					errorBanner.classList.add( 'visible' );
+				} );
+		} );
+	}
+
+	function toggleContactForm( root, resourceId ) {
+		var holder = root.querySelector( '[data-tres-contact-form="' + resourceId + '"]' );
+		if ( ! holder ) return;
+
+		if ( ! holder.hidden ) {
+			holder.hidden = true;
+			return;
+		}
+		holder.hidden = false;
+		if ( holder.dataset.built ) return;
+		holder.dataset.built = '1';
+
+		holder.innerHTML =
+			'<form class="tec-sf-form tres-contact-inner" novalidate>' +
+				'<div class="tec-sf-field" data-field="name"><label>Your Name</label><input type="text" name="name" required><div class="tec-sf-err">This field is required</div></div>' +
+				'<div class="tec-sf-field" data-field="email"><label>Your Email</label><input type="email" name="email" required><div class="tec-sf-err">This field is required</div></div>' +
+				'<div class="tec-sf-field" data-field="message"><label>Message</label><textarea name="message" rows="3" required></textarea><div class="tec-sf-err">This field is required</div></div>' +
+				'<div class="tec-sf-honeypot"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' +
+				'<button type="submit" class="tec-sf-submit">Send Message</button>' +
+				'<div class="tec-sf-error-banner"></div>' +
+				'<div class="tec-sf-success">Message sent!</div>' +
+			'</form>';
+
+		var form = holder.querySelector( 'form' );
+		var errorBanner = holder.querySelector( '.tec-sf-error-banner' );
+		var success = holder.querySelector( '.tec-sf-success' );
+
+		form.addEventListener( 'submit', function ( evt ) {
+			evt.preventDefault();
+			errorBanner.classList.remove( 'visible' );
+
+			var name = val( form, 'name' );
+			var email = val( form, 'email' );
+			var message = val( form, 'message' );
+			form.querySelectorAll( '.tec-sf-field' ).forEach( function ( el ) { el.classList.remove( 'invalid' ); } );
+			var valid = true;
+			if ( ! name ) valid = invalid( form, 'name' );
+			if ( ! email ) valid = invalid( form, 'email' );
+			if ( ! message ) valid = invalid( form, 'message' );
+			if ( ! valid ) return;
+
+			fetch( REST + '/contact/' + resourceId, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify( { name: name, email: email, message: message, website: val( form, 'website' ) } ),
+			} )
+				.then( function ( r ) { return r.json().then( function ( body ) { return { ok: r.ok, body: body }; } ); } )
+				.then( function ( result ) {
+					if ( !result.ok ) throw new Error( ( result.body && result.body.message ) || 'Could not send your message.' );
 					form.style.display = 'none';
 					success.classList.add( 'visible' );
 				} )

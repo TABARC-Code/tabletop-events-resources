@@ -16,7 +16,13 @@
 }
 
 .tres-card-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
-.tres-card-notes { margin: 0; font-size: 14px; line-height: 1.5; color: #444; }
+.tres-card-notes { margin: 0 0 10px; font-size: 14px; line-height: 1.5; color: #444; }
+
+.tres-contact-btn {
+	background: #6c3483; color: #fff; border: none; padding: 7px 16px;
+	border-radius: 4px; font-size: 13px; cursor: pointer;
+}
+.tres-contact-form { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
 
 .tres-form-heading { margin: 0 0 4px; }
 
