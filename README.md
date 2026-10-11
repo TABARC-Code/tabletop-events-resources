@@ -16,6 +16,19 @@ Requires [Tabletop Events Calendar](https://github.com/TABARC-Code/tabletop-gami
 
 Because the core plugin already has everything needed: an organiser email tied to at least one published event. Building this on top of Venues & Organisers would mean Resources only works if you've *also* installed a second companion plugin — breaking the whole point of the jigsaw approach, where each piece only ever depends on the core. Same "anchor on data that already exists" reasoning as the Reviews plugin's organiser widget.
 
+## Installing
+
+Install and activate the core calendar first. Then either upload a zip via Plugins ▸ Add New, or drop the `tabletop-events-resources` folder into `wp-content/plugins/`. GitHub's "Download ZIP" names the folder `...-main`, which WordPress won't treat as the same plugin on update — run `scripts/pack-plugin.sh` to build a correctly named zip instead.
+
+## Other pieces of the set
+
+Every plugin here stands alone and only ever needs the [core calendar](https://github.com/TABARC-Code/Tabletop-Gaming-Events-Calendar) — none depend on each other. Take what's useful:
+
+- [Tabletop-Events-Discord-rsvp-Repo](https://github.com/TABARC-Code/Tabletop-Events-Discord-rsvp-Repo) — RSVP from a Discord button
+- [Tabletop-Events-Reviews](https://github.com/TABARC-Code/Tabletop-Events-Reviews) — RSVP-gated event and organiser reviews
+- [Tabletop-Events-Carpool](https://github.com/TABARC-Code/Tabletop-Events-Carpool) — Lift-share board per event
+- [tabletop-events-tournaments](https://github.com/TABARC-Code/tabletop-events-tournaments) — Swiss pairings and standings
+
 ## Licence
 
 GPL v2 or later.
