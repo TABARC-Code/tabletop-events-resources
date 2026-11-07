@@ -29,6 +29,8 @@ class TRES_Post_Type {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 		add_action( 'save_post_' . TRES_POST_TYPE, array( $this, 'save_meta' ), 10, 2 );
+		add_filter( 'manage_' . TRES_POST_TYPE . '_posts_columns', array( $this, 'columns' ) );
+		add_action( 'manage_' . TRES_POST_TYPE . '_posts_custom_column', array( $this, 'column_content' ), 10, 2 );
 	}
 
 	public function register_post_type() {
@@ -53,6 +55,35 @@ class TRES_Post_Type {
 				'show_in_rest'        => false, // Vetted through /tres/v1/, not the default REST controller.
 			)
 		);
+	}
+
+	public function columns( $cols ) {
+		return array(
+			'cb'       => $cols['cb'],
+			'title'    => $cols['title'],
+			'category' => __( 'Category', 'tabletop-events-resources' ),
+			'quantity' => __( 'Qty', 'tabletop-events-resources' ),
+			'owner'    => __( 'Organiser', 'tabletop-events-resources' ),
+			'loan'     => __( 'On loan', 'tabletop-events-resources' ),
+			'date'     => $cols['date'],
+		);
+	}
+
+	public function column_content( $col, $post_id ) {
+		switch ( $col ) {
+			case 'category':
+				echo esc_html( ucwords( str_replace( '_', ' / ', (string) get_post_meta( $post_id, '_tres_category', true ) ) ) );
+				break;
+			case 'quantity':
+				echo (int) get_post_meta( $post_id, '_tres_quantity', true );
+				break;
+			case 'owner':
+				echo esc_html( get_post_meta( $post_id, '_tres_organiser_email', true ) );
+				break;
+			case 'loan':
+				echo get_post_meta( $post_id, '_tres_on_loan', true ) ? esc_html__( 'Yes', 'tabletop-events-resources' ) : '—';
+				break;
+		}
 	}
 
 	public function add_meta_box() {
@@ -101,6 +132,11 @@ class TRES_Post_Type {
 				</div>
 			</div>
 			<div class="tres-meta-row">
+				<div class="tres-meta-field">
+					<label><input type="checkbox" name="tres_on_loan" value="1" <?php checked( get_post_meta( $post->ID, '_tres_on_loan', true ) ); ?>> <?php esc_html_e( 'Currently on loan', 'tabletop-events-resources' ); ?></label>
+				</div>
+			</div>
+			<div class="tres-meta-row">
 				<div class="tres-meta-field" style="flex-basis:100%;">
 					<label for="tres_notes"><?php esc_html_e( 'Notes (condition, collection arrangements, etc.)', 'tabletop-events-resources' ); ?></label>
 					<textarea name="tres_notes" id="tres_notes" rows="3"><?php echo esc_textarea( $notes ); ?></textarea>
@@ -140,6 +176,7 @@ class TRES_Post_Type {
 		if ( isset( $_POST['tres_quantity'] ) ) {
 			update_post_meta( $post_id, '_tres_quantity', max( 1, (int) $_POST['tres_quantity'] ) );
 		}
+		update_post_meta( $post_id, '_tres_on_loan', empty( $_POST['tres_on_loan'] ) ? 0 : 1 );
 		if ( isset( $_POST['tres_notes'] ) ) {
 			update_post_meta( $post_id, '_tres_notes', sanitize_textarea_field( wp_unslash( $_POST['tres_notes'] ) ) );
 		}

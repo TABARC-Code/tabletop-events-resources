@@ -40,7 +40,8 @@
 			'<form class="tres-mf-form" novalidate>' +
 				field( 'text', 'title', 'Item Name', resource.title ) +
 				numberField( 'quantity', 'Quantity Available', resource.quantity ) +
-				'<div class="tec-sf-field"><label>Notes</label><textarea name="notes" rows="3">' + escapeHtml( resource.notes || '' ) + '</textarea></div>' +
+				'<div class="tec-sf-field"><label><input type="checkbox" name="on_loan"' + ( resource.onLoan ? ' checked' : '' ) + '> Currently on loan</label></div>' +
+			'<div class="tec-sf-field"><label>Notes</label><textarea name="notes" rows="3">' + escapeHtml( resource.notes || '' ) + '</textarea></div>' +
 				'<button type="submit" class="tec-sf-submit">Save Changes</button>' +
 				'<div class="tec-sf-error-banner"></div>' +
 				'<div class="tec-sf-success">Saved!</div>' +
@@ -63,6 +64,7 @@
 				title: val( form, 'title' ),
 				quantity: val( form, 'quantity' ),
 				notes: val( form, 'notes' ),
+				on_loan: form.querySelector( '[name="on_loan"]' ).checked,
 			};
 
 			fetch( REST + '/manage/' + POST_ID, {

@@ -92,6 +92,7 @@ class TRES_Rest {
 				'title'    => get_the_title( $post ),
 				'quantity' => (int) get_post_meta( $post->ID, '_tres_quantity', true ),
 				'notes'    => get_post_meta( $post->ID, '_tres_notes', true ),
+				'onLoan'   => (bool) get_post_meta( $post->ID, '_tres_on_loan', true ),
 			);
 		}
 

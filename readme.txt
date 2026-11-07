@@ -4,7 +4,7 @@ Tags: events, calendar, tabletop, resources, lending
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ No. It stands on its own, using the same "anchor on any one event ID" trick the 
 Only if they know the exact organiser email already on record for that event, which the submission is checked against before anything is accepted.
 
 == Changelog ==
+
+= 1.1.0 =
+* Added: "currently on loan" toggle (self-service and admin), category filter on the public list, admin list columns.
 
 = 1.0.0 =
 * Initial release: tres_resource CPT, organiser-anchored lending list, magic-link self-service management, private "ask about this" contact relay.

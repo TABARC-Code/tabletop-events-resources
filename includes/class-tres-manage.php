@@ -127,6 +127,7 @@ class TRES_Manage {
 				'category' => get_post_meta( $post->ID, '_tres_category', true ),
 				'quantity' => (int) get_post_meta( $post->ID, '_tres_quantity', true ),
 				'notes'    => get_post_meta( $post->ID, '_tres_notes', true ),
+				'onLoan'   => (bool) get_post_meta( $post->ID, '_tres_on_loan', true ),
 			)
 		);
 	}
@@ -146,6 +147,9 @@ class TRES_Manage {
 		}
 		if ( isset( $params['notes'] ) ) {
 			update_post_meta( $post->ID, '_tres_notes', sanitize_textarea_field( $params['notes'] ) );
+		}
+		if ( isset( $params['on_loan'] ) ) {
+			update_post_meta( $post->ID, '_tres_on_loan', filter_var( $params['on_loan'], FILTER_VALIDATE_BOOLEAN ) ? 1 : 0 );
 		}
 
 		return rest_ensure_response( array( 'success' => true, 'message' => __( 'Saved.', 'tabletop-events-resources' ) ) );

@@ -27,3 +27,9 @@
 .tres-form-heading { margin: 0 0 4px; }
 
 .tres-empty { padding: 24px; text-align: center; color: #888; }
+
+.tres-loan { margin-left: auto; margin-right: 10px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; background: rgba(192,57,43,.12); color: #a93226; text-transform: uppercase; }
+.tres-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.tres-pill { border: 1px solid #ccc; background: #fff; border-radius: 20px; padding: 4px 14px; font-size: 13px; cursor: pointer; }
+.tres-pill.is-active { background: #6c3483; border-color: #6c3483; color: #fff; }
+.tres-item[hidden] { display: none; }

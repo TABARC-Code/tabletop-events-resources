@@ -35,7 +35,17 @@
 		if ( ! Array.isArray( resources ) || ! resources.length ) {
 			return '<p class="tres-empty">Nothing listed yet.</p>';
 		}
-		return '<div class="tres-list">' + resources.map( card ).join( '' ) + '</div>';
+		var cats = {};
+		resources.forEach( function ( r ) { cats[ r.category ] = true; } );
+		var pills = Object.keys( cats ).length > 1
+			? '<div class="tres-filters"><button type="button" class="tres-pill is-active" data-tres-cat="">All</button>' +
+				Object.keys( cats ).map( function ( c ) {
+					return '<button type="button" class="tres-pill" data-tres-cat="' + escapeHtml( c ) + '">' + escapeHtml( CATEGORY_LABELS[ c ] || 'Other' ) + '</button>';
+				} ).join( '' ) + '</div>'
+			: '';
+		return pills + '<div class="tres-list">' + resources.map( function ( r ) {
+			return '<div class="tres-item" data-tres-item-cat="' + escapeHtml( r.category ) + '">' + card( r ) + '</div>';
+		} ).join( '' ) + '</div>';
 	}
 
 	function card( r ) {
@@ -43,6 +53,7 @@
 			'<div class="tres-card">' +
 				'<div class="tres-card-top">' +
 					'<span class="tres-badge">' + escapeHtml( CATEGORY_LABELS[ r.category ] || 'Other' ) + '</span>' +
+					( r.onLoan ? '<span class="tres-loan">On loan</span>' : '' ) +
 					'<span class="tres-card-qty">×' + r.quantity + '</span>' +
 				'</div>' +
 				'<div class="tres-card-title">' + escapeHtml( r.title ) + '</div>' +
@@ -76,6 +87,16 @@
 	}
 
 	function bind( root ) {
+		root.querySelectorAll( '[data-tres-cat]' ).forEach( function ( pill ) {
+			pill.addEventListener( 'click', function () {
+				var cat = pill.getAttribute( 'data-tres-cat' );
+				root.querySelectorAll( '[data-tres-cat]' ).forEach( function ( p ) { p.classList.toggle( 'is-active', p === pill ); } );
+				root.querySelectorAll( '[data-tres-item-cat]' ).forEach( function ( it ) {
+					it.hidden = !! cat && it.getAttribute( 'data-tres-item-cat' ) !== cat;
+				} );
+			} );
+		} );
+
 		root.querySelectorAll( '[data-tres-contact]' ).forEach( function ( btn ) {
 			btn.addEventListener( 'click', function () {
 				toggleContactForm( root, btn.getAttribute( 'data-tres-contact' ) );

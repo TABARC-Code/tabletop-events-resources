@@ -3,7 +3,7 @@
  * Plugin Name:       Tabletop Events Calendar — Resources
  * Plugin URI:        https://github.com/TABARC-Code/tabletop-events-resources
  * Description:       Shops and organisers list terrain, tables, and spare dice/minis available to borrow for a session. Requires the Tabletop Events Calendar plugin.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  tabletop-events-calendar
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'TRES_VERSION', '1.0.0' );
+define( 'TRES_VERSION', '1.1.0' );
 define( 'TRES_PLUGIN_FILE', __FILE__ );
 define( 'TRES_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TRES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
